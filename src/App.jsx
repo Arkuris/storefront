@@ -8,16 +8,20 @@ import Footer from './Components/Footer/index.jsx';
 import Header from './Components/Header/index.jsx';
 import Products from './Components/Products';
 import Categories from './Components/Categories'; 
+import SimpleCart from './Components/Cart/index.jsx';
 
 const App = () => (
-  <Provider store={store}> {/* Wrap your components with Provider and pass the store */}
-    <CssBaseline /> {/* Normalize the styling */}
+  <Provider store={store}>
+    <CssBaseline />
     <Box display="flex" flexDirection="column" minHeight="100vh">
       <Header />
-      <Box component="main" flex="1">
-        <Toolbar /> {/* This is needed if you have a fixed AppBar */}
-        <Categories /> {/* Now Categories is included in your main component */}
-        <Products/>
+      <Box display="flex" flexGrow={1}>
+        <Toolbar />
+        <Categories />
+        <Box display="flex" justifyContent="center" width="100%">
+          <Products />
+          <SimpleCart /> 
+        </Box>
       </Box>
       <Footer />
     </Box>

@@ -1,11 +1,15 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import { addToCart } from '../../store/cart/index.js';
+import Button from '@mui/material/Button';
+
 
 const Products = () => {
+  const dispatch = useDispatch();
   const products = useSelector((state) => state.products.products);
   const activeCategory = useSelector((state) => state.categories.activeCategory);
 
@@ -13,6 +17,9 @@ const Products = () => {
     ? products.filter((product) => product.category === activeCategory)
     : products;
 
+  const handleAddToCart = (product) => {
+    dispatch(addToCart(product));
+  };
 
   return (
     <Grid container spacing={2}>
@@ -32,7 +39,13 @@ const Products = () => {
               <Typography color="textSecondary">
                 Inventory: {product.inventoryCount}
               </Typography>
-              {/* Include more product details as needed */}
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={() => handleAddToCart(product)}
+              >
+                Add to Cart
+              </Button>
             </CardContent>
           </Card>
         </Grid>
@@ -40,5 +53,4 @@ const Products = () => {
     </Grid>
   );
 };
-
 export default Products;
