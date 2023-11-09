@@ -7,10 +7,9 @@ const ADD_TO_CART = 'ADD_TO_CART';
 const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 const INCREMENT_QUANTITY = 'INCREMENT_QUANTITY';
 const DECREMENT_QUANTITY = 'DECREMENT_QUANTITY';
-const UPDATE_INVENTORY = 'UPDATE_INVENTORY';
 
 function addOrUpdateCartItem(cart, product) {
-  const existingItemIndex = cart.findIndex(item => item.id === product.id);
+  const existingItemIndex = cart.findIndex(item => item._id === product._id);
   
   if (existingItemIndex > -1) {
     const updatedCart = [...cart];
@@ -47,11 +46,11 @@ export const updateInventory = (productId, quantity) => ({
   payload: { productId, quantity },
 });
 
-export const removeFromCartAndUpdateInventory = (productId) => (dispatch, getState) => {
-  const cartItem = getState().cart.cart.find(item => item.id === productId);
+export const removeFromCartAndUpdateInventory = (_id) => (dispatch, getState) => {
+  const cartItem = getState().cart.cart.find(item => item._id === _id);
   if (cartItem) {
-    dispatch(updateInventory(productId, cartItem.quantity));
-    dispatch(removeFromCart(productId));
+    dispatch(updateInventory(_id, cartItem.quantity));
+    dispatch(removeFromCart(_id));
   }
 };
 
@@ -65,20 +64,20 @@ export default function cartReducer(state = initialState, action) {
   case REMOVE_FROM_CART:
     return {
       ...state,
-      cart: state.cart.filter(item => item.id !== action.payload),
+      cart: state.cart.filter(item => item._id !== action.payload),
     };
   case INCREMENT_QUANTITY:
     return {
       ...state,
       cart: state.cart.map(item =>
-        item.id === action.payload ? { ...item, quantity: item.quantity + 1 } : item,
+        item._id === action.payload ? { ...item, quantity: item.quantity + 1 } : item,
       ),
     };
   case DECREMENT_QUANTITY:
     return {
       ...state,
       cart: state.cart.map(item =>
-        item.id === action.payload ? { ...item, quantity: Math.max(item.quantity - 1, 0) } : item,
+        item._id === action.payload ? { ...item, quantity: Math.max(item.quantity - 1, 0) } : item,
       ),
     };
   default:

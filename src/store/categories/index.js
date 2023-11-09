@@ -1,28 +1,34 @@
-const initialState = {
-  categories: [
-    { name: 'electronics', displayName: 'Electronics', description: 'Gadgets and gizmos' },
-    { name: 'books', displayName: 'Books', description: 'Readable Material' },
-    { name: 'clothing', displayName: 'Clothing', description: 'Cloth created for humans to wear' },
-    // More categories here
-  ],
-  activeCategory: null,
-};
+import { createSlice } from '@reduxjs/toolkit';
+import { loadProducts } from '../../store/products/index.js';
 
-export default function categoriesReducer(state = initialState, action) {
-  switch (action.type) {
-  case 'ACTIVATE_CATEGORY':
-    return {
-      ...state,
-      activeCategory: action.payload,
-    };
-  default:
-    return state;
-  }
-}
+const categoriesSlice = createSlice({
+  name: 'categories',
+  initialState: {
+    categories: [],
+    activeCategory: null,
+  },
+  reducers: {
+    activateCategory: (state, action) => {
+      state.activeCategory = action.payload;
+    },
+  },
+  extraReducers: {
+    [loadProducts.fulfilled]: (state, action) => {
+      const categories = action.payload.results.reduce((acc, product) => {
+        const categoryName = product.category;
+        if (!acc.find((category) => category.name === categoryName)) {
+          acc.push({
+            name: categoryName,
+            displayName: categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
+            description: `${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)} Products`,
+          });
+        }
+        return acc;
+      }, []);
+      state.categories = categories;
+    },
+  },
+});
 
-export const activateCategory = (category) => {
-  return {
-    type: 'ACTIVATE_CATEGORY',
-    payload: category,
-  };
-};
+export const { activateCategory } = categoriesSlice.actions;
+export default categoriesSlice.reducer;
